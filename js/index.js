@@ -6,8 +6,8 @@ const dropdownload = () => {
 const state_dd = document.getElementById('state_dd');
 state_dd.addEventListener('change', dropdownload);
 
-// const lga_dd = document.getElementById('lga_dd');
-// lga_dd.addEventListener('change', dropdownload);
+const lga_dd = document.getElementById('lga_dd');
+lga_dd.addEventListener('change', dropdownload);
 
 const generate = document.getElementById('generate');
 generate.addEventListener('click', e => {
@@ -16,6 +16,5 @@ generate.addEventListener('click', e => {
     puform.submit();
 });
 
-// const ward_dd = document.getElementById('ward_dd');
-// ward_dd.addEventListener('change', dropdownload);
+
 

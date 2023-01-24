@@ -39,10 +39,10 @@ if ($_act == 'generate') {
 
 
 
-echo "<pre>";
-print_r($_REQUEST);
-print_r($gen_result);
-echo "</pre>";
+// echo "<pre>";
+// print_r($_REQUEST);
+// print_r($gen_result);
+// echo "</pre>";
 
 
 ?>
@@ -72,6 +72,9 @@ echo "</pre>";
             <br />
             <br />
             <button type="submit" id='generate'>Generate Stats</button>
+            <br />
+            <?php $newpol_link = "./newpol.php?state_dd=$_state_dd&lga_dd=$_lga_dd" ?>
+            <a href=<?=$newpol_link?>>Store Result for New Polling Unit</a>
         </div>
     </form>
 

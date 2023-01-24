@@ -12,11 +12,33 @@ if (isset($_REQUEST['lga_dd'])) $_lga_dd = $_REQUEST['lga_dd'];
 $_ward_dd   = '';
 if (isset($_REQUEST['ward_dd'])) $_ward_dd = $_REQUEST['ward_dd'];
 
-$_poll_name = '';
-if (isset($_REQUEST['pollunitname'])) $_poll_name = $_REQUEST['pollunitname'];
+$_pollunit_dd = '';
+if (isset($_REQUEST['pollunit_dd'])) $_pollunit_dd = $_REQUEST['pollunit_dd'];
 
 $_act = '';
 if (isset($_REQUEST['act'])) $_act = $_REQUEST['act'];
+
+//Save 
+if ($_act == 'save') {
+
+    $query = '';
+    foreach($_REQUEST as $partysn=>$partyscore) {
+        $partysplit = explode('_',$partysn);
+        if ($partysplit[0] == 'party' && $partyscore > 0) {
+            $partyabrv = trim($partysplit[1]);
+            if ($query == '') {
+                $query = "INSERT INTO `announced_pu_results`(`polling_unit_uniqueid`, `party_abbreviation`, `party_score`, `entered_by_user`, `date_entered`) VALUES ";
+            }
+            else $query .= ', ';
+            $query .= "('$_pollunit_dd','$partyabrv','$partyscore','Bincom_Test','".date('Y-m-d H:i:s')."')";
+        }
+    }
+
+    //echo $query;
+    if ($query != '') {
+        $connect->execute_uquery($query);
+    }
+}
 
 //get States
 $query = "SELECT state_id as code, state_name as info FROM `states`;";
@@ -32,14 +54,23 @@ if ($_state_dd != 'NONE' && $_state_dd != '') {
 //get wards
 $ward_list = array();
 if ($_lga_dd != 'NONE' && $_lga_dd != '') {
-    $query = "SELECT ward_id as id,ward_name as info FROM `ward` where lga_id='$_lga_dd'";
+    $query = "SELECT ward_id as code,ward_name as info FROM `ward` where lga_id='$_lga_dd';";
     $ward_list = $connect->execute_query($query);
+}
+
+//get polling unit List
+$polln_list = array();
+if ($_ward_dd != 'NONE' && $_ward_dd != '') {
+    $query = "SELECT uniqueid as code, polling_unit_name as info FROM `polling_unit` WHERE ward_id='$_ward_dd';";
+    $polln_list = $connect->execute_query($query);
 }
 
 //get party List
 $party_list = array();
 $query = "SELECT * FROM `party`";
 $party_list = $connect->execute_query($query);
+
+
 
 
 ?>
@@ -50,27 +81,27 @@ $party_list = $connect->execute_query($query);
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>New Polling Data</title>
+    <title>New Polling Result</title>
 </head>
 
 <body>
-    <h1>New Polling Unit</h1>
-    <form name='puform' action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method='post'>
+    <h1>New Polling Unit Results</h1>
+    <form name='newpuform' action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method='post'>
         <div>
             <label for=" state_dd">State</label>
-            <?php createDropBox('state_dd', 'state_dd', $state_list, $_state_dd); ?>
+            <?php createDropBox('state_dd', 'state_dd', $state_list, $_state_dd,'code','info',false,true); ?>
             <br />
             <br />
             <label for="lga_dd">LGAs</label>
-            <?php createDropBox('lga_dd', 'lga_dd', $lga_list, $_lga_dd); ?>
+            <?php createDropBox('lga_dd', 'lga_dd', $lga_list, $_lga_dd,'code','info',false,true); ?>
             <br />
             <br />
             <label for="ward_dd">Wards</label>
-            <?php createDropBox('ward_dd', 'ward_dd', $ward_list, $_ward_dd); ?>
+            <?php createDropBox('ward_dd', 'ward_dd', $ward_list, $_ward_dd,'code','info',false,true); ?>
             <br />
             <br />
-            <label for="ward_dd">Polling Unit Name</label>
-            <input type="text" required name='pollunitname' />
+            <label for="pollunit_dd">Polling Unit</label>
+            <?php createDropBox('pollunit_dd', 'pollunit_dd', $polln_list, $_pollunit_dd,'code','info',false,true); ?>
             <br />
             <br />
             <?php
@@ -83,9 +114,11 @@ $party_list = $connect->execute_query($query);
                 }
             }
             ?>
-            <button type="submit" id='generate'>Save</button>
+            <button type="submit" id='save'>Save</button>
         </div>
     </form>
 </body>
+
+<script src="./js/newpol.js" type="text/javascript"></script>
 
 </html>

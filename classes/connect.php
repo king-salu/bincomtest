@@ -48,4 +48,19 @@ class connect
         }
         return $result;
     }
+
+    public function execute_uquery($query) {
+        $res = false;
+        $query_code = utf8_encode($query);
+        if ($this->connect_db()) {
+            try {
+                $res = mysqli_query($this->conn, $query_code);
+                //$result = mysqli_fetch_array($res);
+            } catch (Exception $ex) {
+                echo "Query failed: " . $ex->getMessage();
+            }
+        }
+
+        return $res;
+    }
 }

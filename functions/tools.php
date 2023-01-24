@@ -1,8 +1,8 @@
 <?php
 
-function createDropBox($name, $id, $_array, $value, $_code = 'code', $_desc = 'info', $default = true)
+function createDropBox($name, $id, $_array, $value, $_code = 'code', $_desc = 'info', $default = true, $required = false)
 {
-    $html = "   <select name='$name' id='$id'>" .
+    $html = "   <select name='$name' id='$id' " . (($required) ?   " required >" : '>').
         (($default) ?   "<option value = 'NONE'>Select an item</option>" : '');
     if (!empty($_array) && is_array($_array)) {
         foreach ($_array as $element) {
